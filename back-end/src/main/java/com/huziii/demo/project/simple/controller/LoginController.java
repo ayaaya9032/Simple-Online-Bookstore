@@ -4,12 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.huziii.demo.project.simple.bean.User;
 import com.huziii.demo.project.simple.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/login")
+@CrossOrigin
 public class LoginController {
 
     private UserService service;
@@ -20,12 +19,13 @@ public class LoginController {
     }
 
     @PostMapping
-    public String login(String name, String password) {
+    public String login(@RequestBody JSONObject jsonParam) {
         JSONObject json = new JSONObject();
-        User user = service.login(name, password);
+        User user = service.login(jsonParam.getString("name"), jsonParam.getString("password"));
         if (user != null) {
             json.put("result", true);
-            json.put("object", JSONObject.toJSONString(user));
+            json.put("userId", user.getId());
+            json.put("userType", user.getType());
         } else {
             json.put("result", false);
         }
